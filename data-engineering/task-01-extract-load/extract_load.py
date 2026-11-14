@@ -21,6 +21,7 @@ try:
 
     # Read source records
     documents = list(collection.find({}))
+    print(type(documents[0]["_id"]))
     source_count = len(documents)
 
     print(f"Records found in MongoDB: {source_count}")
