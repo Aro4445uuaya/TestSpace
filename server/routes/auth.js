@@ -182,4 +182,72 @@ router.post("/login", async (req, res) => {
     }
 });
 
+
+// ======================================
+// RESET PASSWORD API
+// ======================================
+
+router.post("/reset-password", async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        if (
+            typeof email !== "string" ||
+            !email.trim() ||
+            typeof newPassword !== "string" ||
+            newPassword.length < 8
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Enter a valid email and password (minimum 8 characters)"
+            });
+        }
+
+        if (Buffer.byteLength(newPassword, "utf8") > 72) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must not exceed 72 bytes"
+            });
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+
+        // Check whether the email exists
+        const [users] = await pool.execute(
+            `SELECT user_id FROM users WHERE email = ? LIMIT 1`,
+            [normalizedEmail]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Email not registered"
+            });
+        }
+
+        // Hash the new password
+        const passwordHash = await bcrypt.hash(newPassword, 12);
+
+        // Update password in MySQL
+        await pool.execute(
+            `UPDATE users SET password_hash = ? WHERE email = ?`,
+            [passwordHash, normalizedEmail]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Password reset successfully"
+        });
+
+    } catch (error) {
+        console.error("Password Reset Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Password reset failed"
+        });
+    }
+});
+
+
 module.exports = router;
