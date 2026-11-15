@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode, type FormEvent } from "react"
-const API_BASE_URL = `http://${window.location.hostname}:3000`
+const API_BASE_URL = "https://testspace-6u65.onrender.com";
 
 type IconName = "grid" | "folder" | "question" | "users" | "chart" | "settings" | "bell" | "search" | "plus" | "arrow" | "chevron" | "more" | "clock" | "calendar" | "check" | "close" | "download" | "eye" | "eyeOff" | "trash" | "copy" | "logout" | "help" | "book" | "code" | "database" | "brain" | "layers" | "shield" | "play" | "menu" | "external" | "trend" | "file" | "filter" | "send" | "spark" | "link"
 function Icon({
